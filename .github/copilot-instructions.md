@@ -34,7 +34,7 @@
   type should be one of the following: `feat`, `fix`, `chore`, `docs`, `style`, `refactor`, `perf`,
   `test`. The scope should be the name of the module or component being changed. The subject should
   be a short description of the change. The `work_item_ref` is one of the following issue references:
-  `fixes`, `closes`, `resolves`, `references` or `related to` followed by the by the issue number.
+  `fixes`, `closes`, `resolves`, `references` or `related to` followed by the issue number.
   Finally those parts make the following format for commit messages:
 
   ```
