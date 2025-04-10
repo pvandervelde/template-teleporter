@@ -53,8 +53,7 @@ library_rust = [
     ".github/ISSUE_TEMPLATE/feature_request.yml",
     ".github/SECURITY.md"
 ]
-``
-
+```
 
 ### 2. GitHub Integration
 
