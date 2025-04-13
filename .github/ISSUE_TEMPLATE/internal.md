@@ -21,4 +21,5 @@ Explain why this code change is needed. What problem does it solve or what impro
 
 ## Additional information
 
-Add any other information or screenshots about the code change here.
+Add any other information or screenshots about the code change here. Add links to any relevant
+documentation or resources.

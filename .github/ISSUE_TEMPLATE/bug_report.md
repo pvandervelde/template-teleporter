@@ -35,4 +35,5 @@ If applicable, add screenshots to help explain your problem.
 
 ## Additional information
 
-Add any other information or screenshots about the problem here.
+Add any other information or screenshots about the problem here. Add links to any relevant
+documentation or resources.
