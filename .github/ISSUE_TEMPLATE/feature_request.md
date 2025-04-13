@@ -20,4 +20,5 @@ A clear and concise description of any alternative solutions or features you've 
 
 ## Additional information
 
-Add any other information or screenshots about the feature here.
+Add any other information or screenshots about the feature here. Add links to any relevant
+documentation or resources.
