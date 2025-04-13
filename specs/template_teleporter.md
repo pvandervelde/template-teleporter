@@ -329,6 +329,64 @@ tracing-subscriber = { version = "0.3", features = ["json"] } # For structured l
 
 *Note: Specific versions might need adjustment based on compatibility and latest releases.*
 
+## Suggested Crates for Template Teleporter
+
+To modularize the Template Teleporter application and ensure maintainability, the following crates
+are suggested:
+
+1. **core**
+   * **Purpose**: Core logic, data structures, state management and database interactions for the
+     Template Teleporter application.
+   * **Responsibilities**:
+     * Define shared data models (e.g., `TemplateState`).
+     * Implement checksum calculation logic.
+     * Provide utilities for configuration parsing.
+     * Interact with DynamoDB or Cosmos DB for storing and retrieving `TemplateState`.
+     * Implement retry logic for database operations.
+   * **Dependencies**:
+     * `serde`, `serde_json` for serialization.
+     * `sha2` for checksum calculation.
+     * `serde_dynamo` for DynamoDB serialization.
+
+2. **developer_platforms**
+   * **Purpose**: Integration with various developer platforms.
+   * **Responsibilities**:
+     * Handle authentication using GitHub App tokens.
+     * Interact with GitHub APIs for fetching templates, creating PRs, etc.
+     * Validate webhook payloads.
+   * **Dependencies**:
+     * `octocrab` for GitHub API interactions.
+     * `jsonwebtoken` for JWT generation.
+
+3. **cli**
+   * **Purpose**: Command-line interface for manual operations and debugging.
+   * **Responsibilities**:
+     * Provide commands for testing configurations, triggering syncs, etc.
+   * **Dependencies**:
+     * `clap` for CLI argument parsing.
+     * `template_teleporter_core`, `template_teleporter_github` for shared functionality.
+
+4. **azure_functions**
+   * **Purpose**: Azure Functions implementation for the Template Teleporter application.
+   * **Responsibilities**:
+     * Serve as the entry point for the application in Azure.
+     * Handle webhook events and trigger synchronization logic.
+   * **Dependencies**:
+     * `azure_functions` for Azure Functions runtime.
+     * `template_teleporter_core`, `template_teleporter_github`for core functionality.
+
+5. **aws_lambda**
+   * **Purpose**: AWS Lambda function implementation.
+   * **Responsibilities**:
+     * Serve as the entry point for the application.
+     * Handle webhook events and trigger synchronization logic.
+   * **Dependencies**:
+     * `lambda_runtime` for AWS Lambda runtime.
+     * `template_teleporter_core`, `template_teleporter_github` for core functionality.
+
+These crates will be organized in a cargo workspace, allowing for shared dependencies and easy
+management of the overall project.
+
 ## Deployment
 
 1. AWS Lambda deployment with Rust runtime
