@@ -373,7 +373,7 @@ are suggested:
      * Handle webhook events and trigger synchronization logic.
    * **Dependencies**:
      * `azure_functions` for Azure Functions runtime.
-     * `template_teleporter_core`, `template_teleporter_github`for core functionality.
+     * `template_teleporter_core`, `template_teleporter_github` for core functionality.
 
 5. **aws_lambda**
    * **Purpose**: AWS Lambda function implementation.
