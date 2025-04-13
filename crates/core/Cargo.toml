@@ -1,0 +1,10 @@
+[package]
+authors.workspace = true
+description = "Core business logic for the Template-Teleporter"
+edition = "2021"
+license-file.workspace = true
+name = "template_teleporter_core"
+repository.workspace = true
+version.workspace = true
+
+[dependencies]
