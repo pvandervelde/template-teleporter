@@ -1,0 +1,14 @@
+[package]
+authors.workspace = true
+description = "APIs for interacting with developer platforms"
+edition = "2021"
+license-file.workspace = true
+name = "template_teleporter_developer_platforms"
+repository.workspace = true
+version.workspace = true
+
+[dependencies]
+async-trait = { workspace = true }
+chrono = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
