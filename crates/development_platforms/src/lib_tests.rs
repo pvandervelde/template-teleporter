@@ -46,9 +46,10 @@ fn test_template_change_new() {
         change.old_checksum_at(1),
         Some(&"old_checksum2".to_string())
     );
-    assert!(change
-        .old_checksums()
-        .eq(vec!["old_checksum1", "old_checksum2"].iter()));
+    assert_eq!(
+        change.old_checksums().collect::<Vec<_>>(),
+        vec!["old_checksum1", "old_checksum2"]
+    );
 }
 
 #[test]
