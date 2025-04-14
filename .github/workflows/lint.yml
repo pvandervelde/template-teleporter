@@ -1,0 +1,73 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  cargo-check:
+    name: Cargo Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Run cargo check
+        run: cargo check
+
+  cargo-fmt:
+    name: Cargo Fmt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Run cargo fmt
+        run: cargo fmt --all -- --check
+
+  cargo-clippy:
+    name: Cargo Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Run cargo clippy
+        run: cargo clippy -- -D warnings
+
+  cargo-deny:
+    name: Cargo Deny
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        checks:
+          - advisories
+          - bans licenses sources
+
+    # Prevent sudden announcement of a new advisory from failing ci:
+    continue-on-error: ${{ matrix.checks == 'advisories' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Install cargo deny
+        run: cargo install cargo-deny
+      - name: Run cargo deny
+        run: cargo deny check ${{ matrix.checks }}
