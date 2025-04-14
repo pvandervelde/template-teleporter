@@ -1,7 +1,6 @@
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
 
 mod errors;
 
@@ -57,7 +56,11 @@ pub struct TemplateMetadata {
 impl TemplateMetadata {
     /// Creates a new `TemplateMetadata`.
     pub fn new(path: TemplatePath, checksum: String, last_updated: DateTime<Utc>) -> Self {
-        Self { path, checksum, last_updated }
+        Self {
+            path,
+            checksum,
+            last_updated,
+        }
     }
 
     /// Returns the path of the template.
@@ -96,7 +99,11 @@ pub struct RepoInfo {
 impl RepoInfo {
     /// Creates a new `RepoInfo`.
     pub fn new(org: String, name: String, default_branch: String) -> Self {
-        Self { org, name, default_branch }
+        Self {
+            org,
+            name,
+            default_branch,
+        }
     }
 
     /// Returns the organization of the repository.
@@ -140,8 +147,18 @@ pub struct TemplateChange {
 
 impl TemplateChange {
     /// Creates a new `TemplateChange`.
-    pub fn new(path: TemplatePath, old_checksum: Vec<String>, new_checksum: String, content: Vec<u8>) -> Self {
-        Self { path, old_checksum, new_checksum, content }
+    pub fn new(
+        path: TemplatePath,
+        old_checksum: Vec<String>,
+        new_checksum: String,
+        content: Vec<u8>,
+    ) -> Self {
+        Self {
+            path,
+            old_checksum,
+            new_checksum,
+            content,
+        }
     }
 
     /// Returns the path of the template change.
@@ -198,7 +215,11 @@ pub struct UpdateResult {
 impl UpdateResult {
     /// Creates a new `UpdateResult`.
     pub fn new(pr_url: String, pr_number: u64, updated_files: Vec<TemplatePath>) -> Self {
-        Self { pr_url, pr_number, updated_files }
+        Self {
+            pr_url,
+            pr_number,
+            updated_files,
+        }
     }
 
     /// Returns the pull request URL of the update result.
@@ -298,5 +319,3 @@ pub trait DeveloperPlatform: Send + Sync {
         changes: &[TemplateChange],
     ) -> Result<UpdateResult, PlatformError>;
 }
-
-
