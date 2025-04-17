@@ -10,10 +10,12 @@ version.workspace = true
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
-thiserror = "1.0"
 sha2 = "0.10"
+thiserror = "1.0"
 hex = "0.4"
 serde_yaml = "0.9"
+async-trait = "0.1"
 
 [dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt"] }
 tempfile = "3.6"
