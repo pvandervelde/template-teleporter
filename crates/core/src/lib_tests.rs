@@ -1,7 +1,8 @@
 use super::*;
+use sha2::Digest;
 use std::fs::File;
 use std::io::Write;
-use tempfile::tempdir;
+use tempfile::tempdir; // Added import for Sha256::new()
 
 #[test]
 fn test_calculate_checksum() {
@@ -61,21 +62,10 @@ fn test_core_error_platform_error() {
     assert!(msg.contains("platform failed"));
 }
 
-#[tokio::test]
-async fn test_state_manager_new() {
-    let config = AppConfig {
-        database_type: DatabaseType::Dynamodb,
-        database_endpoint: Some("http://localhost:8000".to_string()),
-        table_name: "TestTable".to_string(),
-    };
-    let manager = StateManager::new(&config).await.unwrap();
-    assert_eq!(manager.table_name, "TestTable");
-}
-
 #[test]
 fn debug_raw_hash_bytes() {
     let data = b"test data";
-    let mut hasher = sha2::Sha256::new();
+    let mut hasher = sha2::Sha256::new(); // Now works due to Digest import
     hasher.update(data);
     let result = hasher.finalize();
     println!("Raw hash bytes: {:?}", result);

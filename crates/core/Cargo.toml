@@ -15,7 +15,10 @@ thiserror = "1.0"
 hex = "0.4"
 serde_yaml = "0.9"
 async-trait = "0.1"
+# Cloud-specific dependencies removed, core is now cloud-agnostic.
+# Implementations using these will be in separate crates (e.g., aws_backend).
 
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt"] }
 tempfile = "3.6"
+mockall = "0.12"                                       # For mocking traits in tests
