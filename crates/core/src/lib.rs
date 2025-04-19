@@ -16,8 +16,3 @@ pub use updater::*;
 
 mod filesystem_backend; // Added for testing
 pub use filesystem_backend::*; // Added for testing
-
-// Test module declaration for lib.rs itself
-#[cfg(test)]
-#[path = "lib_tests.rs"]
-mod tests;

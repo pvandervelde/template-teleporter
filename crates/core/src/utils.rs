@@ -5,6 +5,11 @@ use crate::types::{AppConfig, CoreError, Result};
 use sha2::{Digest, Sha256};
 use std::path::Path;
 
+// Test module declaration for lib.rs itself
+#[cfg(test)]
+#[path = "utils_tests.rs"]
+mod tests;
+
 /// Calculates the SHA-256 checksum for the given input data.
 ///
 /// Uses the `sha2` crate for the hashing algorithm and `hex` crate for encoding the result.

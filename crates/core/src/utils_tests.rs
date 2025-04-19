@@ -1,3 +1,5 @@
+use crate::DatabaseType;
+
 use super::*;
 use std::fs::File;
 use std::io::Write;
