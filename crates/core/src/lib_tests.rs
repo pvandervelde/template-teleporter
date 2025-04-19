@@ -61,12 +61,3 @@ fn test_core_error_platform_error() {
     let msg = format!("{}", err);
     assert!(msg.contains("platform failed"));
 }
-
-#[test]
-fn debug_raw_hash_bytes() {
-    let data = b"test data";
-    let mut hasher = sha2::Sha256::new(); // Now works due to Digest import
-    hasher.update(data);
-    let result = hasher.finalize();
-    println!("Raw hash bytes: {:?}", result);
-}

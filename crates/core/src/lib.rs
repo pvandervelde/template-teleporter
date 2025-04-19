@@ -11,6 +11,9 @@ pub use state_manager::*;
 mod updater;
 pub use updater::*;
 
+mod filesystem_backend;
+pub use filesystem_backend::*;
+
 // Test module declaration
 #[cfg(test)]
 #[path = "lib_tests.rs"]

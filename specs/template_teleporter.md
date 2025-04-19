@@ -341,7 +341,7 @@ are suggested:
      * Define shared data models (e.g., `TemplateState`).
      * Implement checksum calculation logic.
      * Provide utilities for configuration parsing.
-     * Interact with DynamoDB or Cosmos DB for storing and retrieving `TemplateState`.
+     * Interact with the database for storing and retrieving `TemplateState`.
      * Implement retry logic for database operations.
    * **Dependencies**:
      * `serde`, `serde_json` for serialization.
@@ -371,6 +371,7 @@ are suggested:
    * **Responsibilities**:
      * Serve as the entry point for the application in Azure.
      * Handle webhook events and trigger synchronization logic.
+     * Provide implementation for Azure-specific features (e.g., Cosmos DB integration).
    * **Dependencies**:
      * `azure_functions` for Azure Functions runtime.
      * `template_teleporter_core`, `template_teleporter_github` for core functionality.
@@ -380,6 +381,7 @@ are suggested:
    * **Responsibilities**:
      * Serve as the entry point for the application.
      * Handle webhook events and trigger synchronization logic.
+     * Provide implementation for AWS-specific features (e.g., DynamoDB integration).
    * **Dependencies**:
      * `lambda_runtime` for AWS Lambda runtime.
      * `template_teleporter_core`, `template_teleporter_github` for core functionality.
