@@ -3,7 +3,6 @@ use crate::types::{CoreError, Result, TemplateState}; // Import necessary types
 use async_trait::async_trait;
 use chrono::Utc;
 use mockall::mock;
-use std::sync::Arc;
 
 // Create a mock implementation of the StatePersistence trait
 mock! {

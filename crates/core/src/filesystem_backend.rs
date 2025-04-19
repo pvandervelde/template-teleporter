@@ -38,7 +38,7 @@ impl FilesystemBackend {
     /// directory cannot be created.
     pub fn new(base_path: impl AsRef<Path>) -> Result<Self> {
         let path = base_path.as_ref().to_path_buf();
-        fs::create_dir_all(&path).map_err(|e| CoreError::IoError(e))?;
+        fs::create_dir_all(&path).map_err(CoreError::IoError)?;
         Ok(Self {
             base_path: path,
             lock: Arc::new(Mutex::new(())),

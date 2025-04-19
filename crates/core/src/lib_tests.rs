@@ -1,5 +1,4 @@
 use super::*;
-use sha2::Digest;
 use std::fs::File;
 use std::io::Write;
 use tempfile::tempdir; // Added import for Sha256::new()
