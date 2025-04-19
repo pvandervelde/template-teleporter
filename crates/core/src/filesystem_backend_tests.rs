@@ -4,6 +4,7 @@ use super::*; // Import items from filesystem_backend.rs
 use crate::state_manager::StatePersistence; // Import the trait
 use crate::types::TemplateState;
 use chrono::Utc;
+use futures::future;
 use std::fs;
 use tempfile::tempdir;
 
@@ -146,7 +147,7 @@ async fn test_filesystem_backend_handles_concurrent_updates() {
         })
         .collect::<Vec<_>>();
 
-    let results = futures::future::join_all(tasks).await;
+    let results = future::join_all(tasks).await;
 
     // Check all updates succeeded without IO errors or panics
     for result in results {
