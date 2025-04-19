@@ -39,7 +39,7 @@ pub fn calculate_checksum(data: &[u8]) -> Result<String> {
 /// Parses the application configuration from a specified YAML file path.
 ///
 /// Reads the file at the given path and attempts to deserialize it into an `AppConfig` struct
-/// using `serde_yaml`.
+/// using `serde_yaml`. Also performs basic validation.
 ///
 /// # Arguments
 /// * `config_path` - Path to the YAML configuration file.
@@ -48,16 +48,25 @@ pub fn calculate_checksum(data: &[u8]) -> Result<String> {
 /// A `Result` containing the parsed `AppConfig` on success, or a `CoreError` if:
 ///   - The file cannot be opened (`CoreError::IoError`).
 ///   - The file content is not valid YAML or doesn't match the `AppConfig` structure (`CoreError::ConfigParseError`).
+///   - A required configuration value is missing or invalid (`CoreError::MissingConfiguration`).
 ///
 /// # Errors
 /// Returns `CoreError::IoError` if the file cannot be opened.
 /// Returns `CoreError::ConfigParseError` if YAML parsing fails.
+/// Returns `CoreError::MissingConfiguration` if `table_name` is empty.
 pub fn parse_config(config_path: &Path) -> Result<AppConfig> {
     // Open the file, propagating IO errors.
     let file = std::fs::File::open(config_path)?;
     // Parse the YAML, mapping serde_yaml errors to our CoreError::ConfigParseError.
     let config: AppConfig =
         serde_yaml::from_reader(file).map_err(|e| CoreError::ConfigParseError { source: e })?;
-    // TODO: Add validation logic for AppConfig fields if needed (e.g., check table_name format).
+
+    // Basic validation: Ensure table_name is not empty
+    if config.table_name.is_empty() {
+        return Err(CoreError::MissingConfiguration(
+            "table_name cannot be empty".to_string(),
+        ));
+    }
+
     Ok(config)
 }
