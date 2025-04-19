@@ -88,6 +88,7 @@
   - Design
     - Architecture
     - Data flow
+    - Module breakdown
     - Other relevant details
   - Conclusion
 
@@ -103,6 +104,11 @@
   all input and output paths of the code. This includes edge cases and error handling. Use coverage
   tools to measure the test coverage and use mutation testing to ensure that the tests are
   effective.
+
+- **wf-test-methods**: Employ different test approaches to get good coverage of both happy path
+  and error handling. Consider approaches like unit tests, property based testing, fuzz testing,
+  integration tests, end-to-end tests, and performance tests. Use the appropriate testing
+  frameworks and tools for the programming language being used.
 
 - **wf-documentation**: The coding task is not complete without documentation. All code should be
   well-documented. Use comments to explain the purpose of complex code and to provide context for
