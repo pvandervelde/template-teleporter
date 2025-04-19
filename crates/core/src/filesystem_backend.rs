@@ -61,7 +61,7 @@ impl StatePersistence for FilesystemBackend {
         let file_path = self.get_file_path(template_id);
         let _guard = self.lock.lock().await; // Lock for read operation consistency
 
-        match fs::read_to_string(&file_path) {
+        match tokio::fs::read_to_string(&file_path).await {
             Ok(content) => {
                 let state: TemplateState = serde_json::from_str(&content).map_err(|e| {
                     CoreError::DatabaseError(format!(
