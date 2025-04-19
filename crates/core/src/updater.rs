@@ -57,8 +57,8 @@ impl TemplateUpdater {
     /// 3. Compares the new checksum with the `current_checksum` in the retrieved state (if any).
     /// 4. If the checksums differ or no previous state exists (`needs_update` is true):
     ///    a. **(Placeholder)** In a full implementation, this is where interaction with platform clients
-    ///       would occur to fetch target repository content, check for manual overrides, and potentially
-    ///       create a Pull Request. This logic is currently omitted.
+    ///    would occur to fetch target repository content, check for manual overrides, and potentially
+    ///    create a Pull Request. This logic is currently omitted.
     ///    b. Creates a new `TemplateState` struct with the updated information (new checksum, current timestamp).
     ///    c. Saves the new state back to the persistence layer via the `StateManager`.
     /// 5. If the checksums match, it logs that no update is needed.
