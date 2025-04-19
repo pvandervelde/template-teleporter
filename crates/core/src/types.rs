@@ -69,23 +69,9 @@ pub struct TemplateState {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")] // Consistent config naming
 pub struct AppConfig {
-    /// Specifies the type of database backend to use for state persistence.
-    pub database_type: DatabaseType,
-
     /// Optional endpoint override for the database (e.g., for local testing).
     pub database_endpoint: Option<String>,
 
     /// The name of the table or container used for storing `TemplateState`.
     pub table_name: String,
-}
-
-/// Enumerates the supported database backends for state management.
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-#[serde(rename_all = "lowercase")]
-pub enum DatabaseType {
-    /// Use AWS DynamoDB as the persistence backend.
-    Dynamodb,
-    /// Use Azure Cosmos DB (likely Table API) as the persistence backend.
-    Cosmosdb,
-    // Add other potential DB types if needed (e.g., Filesystem for testing)
 }
