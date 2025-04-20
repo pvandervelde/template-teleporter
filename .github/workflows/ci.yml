@@ -20,14 +20,14 @@ jobs:
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@4a27a04f8a48ceb6b30a8541bae8994ce2ea4dd7 # v2
         with:
-          tool: cargo-llvm-cov@0.6.10
+          tool: cargo-llvm-cov
 
       - uses: taiki-e/install-action@v2
         with:
-          tool: nextest@0.24.0
+          tool: nextest
 
       - name: Generate code coverage
-        run: cargo llvm-cov --all-features --workspace --codecov --output-path codecov.json nextest
+        run: cargo llvm-cov --all-features --workspace --codecov --output-path codecov.json nextest --profile default
 
       - name: Upload test results to Codecov
         uses: codecov/test-results-action@v1
@@ -38,7 +38,6 @@ jobs:
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v5
-        if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
           files: codecov.json
