@@ -133,16 +133,17 @@ async fn test_filesystem_backend_get_state_io_error() {
     let template_id = "io-error-template";
     let file_path = base_path.join("io-error-template.json");
 
-    // Write valid JSON, then make the file readonly
+    // Write valid JSON, then make the file unreadable (chmod 000)
+    use std::os::unix::fs::PermissionsExt;
     fs::write(&file_path, r#"{"template_id":"id","source_repository":"repo","current_checksum":"sum","last_updated_utc":"2020-01-01T00:00:00Z"}"#).unwrap();
     let mut perms = fs::metadata(&file_path).unwrap().permissions();
-    perms.set_readonly(true);
+    perms.set_mode(0o000);
     fs::set_permissions(&file_path, perms.clone()).unwrap();
 
     let get_result = backend.get_state(template_id).await;
 
-    // Restore permissions for cleanup
-    perms.set_readonly(false);
+    // Restore permissions for cleanup (chmod 644)
+    perms.set_mode(0o644);
     fs::set_permissions(&file_path, perms).unwrap();
 
     assert!(get_result.is_err());
