@@ -33,6 +33,69 @@ fn test_parse_config_with_enum() {
 }
 
 #[test]
+fn test_parse_config_file_not_found() {
+    use std::path::PathBuf;
+    let path = PathBuf::from("this_file_should_not_exist.yaml");
+    let result = parse_config(&path);
+    assert!(result.is_err());
+    match result.err().unwrap() {
+        CoreError::IoError(_) => {}
+        _ => panic!("Expected IoError for missing file"),
+    }
+}
+
+#[test]
+fn test_parse_config_invalid_yaml() {
+    let dir = tempdir().unwrap();
+    let file_path = dir.path().join("invalid.yaml");
+    let mut file = File::create(&file_path).unwrap();
+    writeln!(file, "not: valid: yaml: [").unwrap();
+
+    let result = parse_config(&file_path);
+    assert!(result.is_err());
+    match result.err().unwrap() {
+        CoreError::ConfigParseError { .. } => {}
+        _ => panic!("Expected ConfigParseError for invalid YAML"),
+    }
+}
+
+#[test]
+fn test_parse_config_empty_table_name() {
+    let dir = tempdir().unwrap();
+    let file_path = dir.path().join("empty_table.yaml");
+    let mut file = File::create(&file_path).unwrap();
+    writeln!(
+        file,
+        "---\ndatabaseEndpoint: http://localhost:8000\ntableName: \"\""
+    )
+    .unwrap();
+
+    let result = parse_config(&file_path);
+    assert!(result.is_err());
+    match result.err().unwrap() {
+        CoreError::MissingConfiguration(msg) => {
+            assert!(msg.contains("table_name"));
+        }
+        _ => panic!("Expected MissingConfiguration for empty tableName"),
+    }
+}
+
+#[test]
+fn test_parse_config_missing_table_name() {
+    let dir = tempdir().unwrap();
+    let file_path = dir.path().join("missing_table.yaml");
+    let mut file = File::create(&file_path).unwrap();
+    writeln!(file, "---\ndatabaseEndpoint: http://localhost:8000").unwrap();
+
+    let result = parse_config(&file_path);
+    assert!(result.is_err());
+    match result.err().unwrap() {
+        CoreError::ConfigParseError { .. } => {}
+        _ => panic!("Expected ConfigParseError for missing tableName"),
+    }
+}
+
+#[test]
 fn test_app_config_serialization() {
     let config = AppConfig {
         database_endpoint: Some("https://cosmos.example.com".to_string()),

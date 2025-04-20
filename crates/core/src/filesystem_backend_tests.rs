@@ -124,6 +124,65 @@ async fn test_filesystem_backend_get_state_invalid_json() {
 }
 
 #[tokio::test]
+async fn test_filesystem_backend_get_state_io_error() {
+    let dir = tempdir().unwrap();
+    let base_path = dir.path().join("state");
+    let backend = FilesystemBackend::new(&base_path).unwrap();
+
+    let template_id = "io-error-template";
+    let file_path = base_path.join("io-error-template.json");
+
+    // Write valid JSON, then make the file readonly
+    fs::write(&file_path, r#"{"template_id":"id","source_repository":"repo","current_checksum":"sum","last_updated_utc":"2020-01-01T00:00:00Z"}"#).unwrap();
+    let mut perms = fs::metadata(&file_path).unwrap().permissions();
+    perms.set_readonly(true);
+    fs::set_permissions(&file_path, perms.clone()).unwrap();
+
+    let get_result = backend.get_state(template_id).await;
+
+    // Restore permissions for cleanup
+    perms.set_readonly(false);
+    fs::set_permissions(&file_path, perms).unwrap();
+
+    assert!(get_result.is_err());
+    match get_result.err().unwrap() {
+        CoreError::IoError(_) => {}
+        _ => panic!("Expected IoError due to unreadable file"),
+    }
+}
+
+#[tokio::test]
+async fn test_filesystem_backend_update_state_io_error() {
+    let dir = tempdir().unwrap();
+    let base_path = dir.path().join("readonly_state");
+    let backend = FilesystemBackend::new(&base_path).unwrap();
+
+    // Make the directory read-only
+    let mut perms = fs::metadata(&base_path).unwrap().permissions();
+    perms.set_readonly(true);
+    fs::set_permissions(&base_path, perms.clone()).unwrap();
+
+    let state = TemplateState {
+        template_id: "fail".to_string(),
+        source_repository: "repo".to_string(),
+        current_checksum: "sum".to_string(),
+        last_updated_utc: Utc::now(),
+    };
+
+    let result = backend.update_state(&state).await;
+
+    // Restore permissions for cleanup
+    perms.set_readonly(false);
+    fs::set_permissions(&base_path, perms).unwrap();
+
+    assert!(result.is_err());
+    match result.err().unwrap() {
+        CoreError::IoError(_) => {}
+        _ => panic!("Expected IoError due to unwritable directory"),
+    }
+}
+
+#[tokio::test]
 async fn test_filesystem_backend_handles_concurrent_updates() {
     // This test verifies that the Mutex prevents race conditions,
     // although fully proving absence of races is complex.

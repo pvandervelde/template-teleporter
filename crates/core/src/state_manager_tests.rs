@@ -14,6 +14,33 @@ mock! {
     }
 }
 
+#[test]
+fn test_state_manager_debug_impl() {
+    // Use a mock backend to construct StateManager
+    use super::StatePersistence;
+    use async_trait::async_trait;
+
+    struct DummyBackend;
+    #[async_trait]
+    impl StatePersistence for DummyBackend {
+        async fn get_state(&self, _template_id: &str) -> Result<Option<TemplateState>> {
+            Ok(None)
+        }
+        async fn update_state(&self, _state: &TemplateState) -> Result<()> {
+            Ok(())
+        }
+    }
+
+    let manager = StateManager::new(Box::new(DummyBackend));
+    let debug_str = format!("{:?}", manager);
+    assert!(debug_str.contains("StateManager"));
+
+    // Also test Debug for the trait object itself
+    let backend: Box<dyn StatePersistence> = Box::new(DummyBackend);
+    let debug_trait_str = format!("{:?}", backend);
+    assert!(debug_trait_str.contains("StatePersistence"));
+}
+
 #[tokio::test]
 async fn test_state_manager_get_state_found() {
     let template_id = "test-template";
