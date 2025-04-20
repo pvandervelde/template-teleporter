@@ -22,10 +22,23 @@ jobs:
         with:
           tool: cargo-llvm-cov@0.6.10
 
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: nextest@0.24.0
+
       - name: Generate code coverage
-        run: cargo llvm-cov --all-features --workspace --codecov --output-path codecov.json
+        run: cargo llvm-cov --all-features --workspace --codecov --output-path codecov.json nextest
+
+      - name: Upload test results to Codecov
+        uses: codecov/test-results-action@v1
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          files: ./target/nextest/default/junit.xml
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v5
+        if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
           files: codecov.json

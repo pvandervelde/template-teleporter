@@ -16,7 +16,7 @@ hex = "0.4"
 serde_yaml = "0.9"
 async-trait = "0.1"
 serde_json = "1.0"                                 # For FilesystemBackend JSON serialization
-tokio = { version = "1", features = ["sync"] }     # For FilesystemBackend Mutex
+tokio = { version = "1", features = ["fs", "sync"] }     # For FilesystemBackend Mutex
 # Cloud-specific dependencies removed, core is now cloud-agnostic.
 # Implementations using these will be in separate crates (e.g., aws_backend).
 

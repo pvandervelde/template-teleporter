@@ -22,3 +22,7 @@ Cargo.lock
 memory-bank/
 .roo/system-prompt-*
 .roomodes
+
+# Ignore the coverage reports
+coverage.lcov
+codecov.json
