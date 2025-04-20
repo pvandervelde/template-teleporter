@@ -123,6 +123,7 @@ async fn test_filesystem_backend_get_state_invalid_json() {
     }
 }
 
+#[cfg(unix)]
 #[tokio::test]
 async fn test_filesystem_backend_get_state_io_error() {
     let dir = tempdir().unwrap();
@@ -151,6 +152,7 @@ async fn test_filesystem_backend_get_state_io_error() {
     }
 }
 
+#[cfg(unix)]
 #[tokio::test]
 async fn test_filesystem_backend_update_state_io_error() {
     let dir = tempdir().unwrap();
