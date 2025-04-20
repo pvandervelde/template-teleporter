@@ -8,6 +8,10 @@ use chrono::Utc;
 use std::fmt; // Import fmt for custom Debug
 use std::sync::Arc;
 
+#[cfg(test)]
+#[path = "updater_tests.rs"]
+mod tests;
+
 /// Handles the core logic for processing template updates.
 ///
 /// This struct uses a `StateManager` (configured with a specific `StatePersistence` backend)

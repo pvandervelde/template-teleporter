@@ -1,23 +1,19 @@
 //! Unit tests for TemplateUpdater in updater.rs
 
 use super::*;
-use crate::state_manager::StateManager;
+use crate::state_manager::{StateManager, StatePersistence};
 use crate::types::{CoreError, Result, TemplateState};
 use async_trait::async_trait;
 use chrono::Utc;
 use mockall::mock;
 use std::sync::Arc;
 
-// Mock StateManager using mockall
+// Mock StatePersistence using mockall
 mock! {
-    pub StateManager {
-        #[async_trait]
-        pub async fn get_state(&self, template_id: &str) -> Result<Option<TemplateState>>;
-        #[async_trait]
-        pub async fn update_state(&self, state: &TemplateState) -> Result<()>;
-    }
+    pub StatePersistence {}
+
     #[async_trait]
-    impl StateManager {
+    impl StatePersistence for StatePersistence {
         async fn get_state(&self, template_id: &str) -> Result<Option<TemplateState>>;
         async fn update_state(&self, state: &TemplateState) -> Result<()>;
     }
@@ -30,16 +26,16 @@ async fn test_process_update_new_template() {
     let new_template_data = b"template content";
     let checksum = crate::utils::calculate_checksum(new_template_data).unwrap();
 
-    let mut mock_manager = MockStateManager::new();
+    let mut mock_backend = MockStatePersistence::new();
     // get_state returns Ok(None) to simulate new template
-    mock_manager
+    mock_backend
         .expect_get_state()
         .withf(move |id| id == template_id)
         .times(1)
         .returning(|_| Ok(None));
 
     // update_state expects to be called with the new TemplateState
-    mock_manager
+    mock_backend
         .expect_update_state()
         .withf(move |state| {
             state.template_id == template_id
@@ -49,7 +45,8 @@ async fn test_process_update_new_template() {
         .times(1)
         .returning(|_| Ok(()));
 
-    let updater = TemplateUpdater::new(Arc::new(mock_manager));
+    let state_manager = StateManager::new(Box::new(mock_backend));
+    let updater = TemplateUpdater::new(Arc::new(state_manager));
     let result = updater
         .process_update(template_id, source_repository, new_template_data)
         .await;
@@ -71,18 +68,19 @@ async fn test_process_update_unchanged_template() {
         last_updated_utc: Utc::now(),
     };
 
-    let mut mock_manager = MockStateManager::new();
+    let mut mock_backend = MockStatePersistence::new();
     // get_state returns Ok(Some(state)) with matching checksum
-    mock_manager
+    mock_backend
         .expect_get_state()
         .withf(move |id| id == template_id)
         .times(1)
         .returning(move |_| Ok(Some(state.clone())));
 
     // update_state should NOT be called
-    mock_manager.expect_update_state().times(0);
+    mock_backend.expect_update_state().times(0);
 
-    let updater = TemplateUpdater::new(Arc::new(mock_manager));
+    let state_manager = StateManager::new(Box::new(mock_backend));
+    let updater = TemplateUpdater::new(Arc::new(state_manager));
     let result = updater
         .process_update(template_id, source_repository, new_template_data)
         .await;
@@ -106,16 +104,16 @@ async fn test_process_update_changed_template() {
         last_updated_utc: Utc::now(),
     };
 
-    let mut mock_manager = MockStateManager::new();
+    let mut mock_backend = MockStatePersistence::new();
     // get_state returns Ok(Some(state)) with non-matching checksum
-    mock_manager
+    mock_backend
         .expect_get_state()
         .withf(move |id| id == template_id)
         .times(1)
         .returning(move |_| Ok(Some(state.clone())));
 
     // update_state expects to be called with the new TemplateState
-    mock_manager
+    mock_backend
         .expect_update_state()
         .withf(move |state| {
             state.template_id == template_id
@@ -125,7 +123,8 @@ async fn test_process_update_changed_template() {
         .times(1)
         .returning(|_| Ok(()));
 
-    let updater = TemplateUpdater::new(Arc::new(mock_manager));
+    let state_manager = StateManager::new(Box::new(mock_backend));
+    let updater = TemplateUpdater::new(Arc::new(state_manager));
     let result = updater
         .process_update(template_id, source_repository, new_template_data)
         .await;
@@ -140,18 +139,19 @@ async fn test_process_update_get_state_error() {
     let new_template_data = b"irrelevant";
     let error_msg = "simulated get_state error";
 
-    let mut mock_manager = MockStateManager::new();
+    let mut mock_backend = MockStatePersistence::new();
     // get_state returns an error
-    mock_manager
+    mock_backend
         .expect_get_state()
         .withf(move |id| id == template_id)
         .times(1)
         .returning(move |_| Err(CoreError::DatabaseError(error_msg.to_string())));
 
     // update_state should NOT be called
-    mock_manager.expect_update_state().times(0);
+    mock_backend.expect_update_state().times(0);
 
-    let updater = TemplateUpdater::new(Arc::new(mock_manager));
+    let state_manager = StateManager::new(Box::new(mock_backend));
+    let updater = TemplateUpdater::new(Arc::new(state_manager));
     let result = updater
         .process_update(template_id, source_repository, new_template_data)
         .await;
@@ -171,16 +171,16 @@ async fn test_process_update_update_state_error() {
     let checksum = crate::utils::calculate_checksum(new_template_data).unwrap();
     let error_msg = "simulated update_state error";
 
-    let mut mock_manager = MockStateManager::new();
+    let mut mock_backend = MockStatePersistence::new();
     // get_state returns Ok(None) to simulate new template
-    mock_manager
+    mock_backend
         .expect_get_state()
         .withf(move |id| id == template_id)
         .times(1)
         .returning(|_| Ok(None));
 
     // update_state returns an error
-    mock_manager
+    mock_backend
         .expect_update_state()
         .withf(move |state| {
             state.template_id == template_id
@@ -190,7 +190,8 @@ async fn test_process_update_update_state_error() {
         .times(1)
         .returning(move |_| Err(CoreError::DatabaseError(error_msg.to_string())));
 
-    let updater = TemplateUpdater::new(Arc::new(mock_manager));
+    let state_manager = StateManager::new(Box::new(mock_backend));
+    let updater = TemplateUpdater::new(Arc::new(state_manager));
     let result = updater
         .process_update(template_id, source_repository, new_template_data)
         .await;
@@ -205,8 +206,9 @@ async fn test_process_update_update_state_error() {
 #[tokio::test]
 async fn test_template_updater_new_and_debug() {
     // Test TemplateUpdater::new and Debug implementation
-    let mock_manager = Arc::new(MockStateManager::new());
-    let updater = TemplateUpdater::new(mock_manager);
+    let mock_backend = Box::new(MockStatePersistence::new());
+    let state_manager = Arc::new(StateManager::new(mock_backend));
+    let updater = TemplateUpdater::new(state_manager);
     let debug_str = format!("{:?}", updater);
     assert!(debug_str.contains("TemplateUpdater"));
 }
