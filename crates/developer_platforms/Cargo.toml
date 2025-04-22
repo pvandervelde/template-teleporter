@@ -1,0 +1,35 @@
+[package]
+name = "template-teleporter-developer-platforms"
+version = "0.1.0"
+edition = "2021"
+description = "Provides traits and implementations for interacting with developer platforms like GitHub."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/pvandervelde/template-teleporter"
+readme = "README.md" # Optional: Add a README later
+
+[dependencies]
+# Async
+async-trait = "0.1"
+tokio = { version = "1", features = ["full"] } # Needed for async runtime
+
+# Data Handling & Serialization
+serde = { version = "1.0", features = ["derive"] }
+chrono = { version = "0.4", features = ["serde"] }
+hex = "0.4"
+sha2 = "0.10" # For potential checksum verification/handling within platform logic
+base64 = "0.22" # For encoding/decoding content, secrets
+
+# Error Handling
+thiserror = "1.0"
+
+# Logging
+log = "0.4"
+
+# Platform Specific (GitHub)
+octocrab = "0.38" # Check for latest compatible version
+jsonwebtoken = "9"
+ring = "0.17" # For crypto operations (JWT signing)
+
+[dev-dependencies]
+mockito = "1.4.0" # For mocking HTTP requests in tests
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] } # Ensure tokio test features are enabled
