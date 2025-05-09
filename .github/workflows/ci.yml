@@ -30,7 +30,7 @@ jobs:
         run: cargo llvm-cov --all-features --workspace --codecov --output-path codecov.json nextest --profile default
 
       - name: Upload test results to Codecov
-        uses: codecov/test-results-action@v1
+        uses: codecov/test-results-action@f2dba722c67b86c6caa034178c6e4d35335f6706 # v1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
