@@ -21,10 +21,10 @@ tokio = { version = "1", features = ["fs", "sync"] }     # For FilesystemBackend
 # Implementations using these will be in separate crates (e.g., aws_backend).
 
 [dev-dependencies]
-tokio = { version = "1", features = [
+tokio = { version = "=1.45.1", features = [
     "macros",
     "rt",
 ] } # Keep this for tests needing full runtime
-tempfile = "3.6"
-mockall = "0.12" # For mocking traits in tests
-futures = "0.3.31"
+tempfile = "=3.20.0"
+mockall = "=0.12.1" # For mocking traits in tests
+futures = "=0.3.31"
